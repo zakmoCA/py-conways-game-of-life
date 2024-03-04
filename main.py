@@ -20,17 +20,40 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
 clock = pygame.time.Clock()
 
-# pygame requires event loop for calling core logic
+# event loop to init/run game logic
 def main():
     running = True
     
+    positions = set()
+    positions.add((10,10)) # will add tuple to positions set which we want, instead of two 10s individually
     while running:
         clock.tick(FPS)
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-    pygame.quit()
+                
+        screen.fill(GREY)            
+        draw_grid(positions)
+        pygame.display.update() # run this whenever i want to reflect logic that changes state to the GUI
+                
     
-if __name__ = "__main__":
+def draw_grid(positions):
+    # won't tell me pixel position but col x row position in the grid
+    # translate the col x row position to the pixel position then draw it
+    for position in positions:
+        col, row = position
+        # in pygame we always draw from top left corner
+        top_left = (col * TILE_SIZE, row * TILE_SIZE)
+        pygame.draw.rect(screen, YELLOW, (*top_left, TILE_SIZE, TILE_SIZE)) 
+        # *top_left: the prefixed * unpacks its tuple so tat they're passed as individual args
+  
+    for row in range(GRID_HEIGHT):
+          pygame.draw.line(screen, BLACK, (0, row * TILE_SIZE), (WIDTH, row * TILE_SIZE))
+    
+    for col in range(GRID_WIDTH):
+        pygame.draw.line(screen, BLACK, (col * TILE_SIZE, 0), (col * TILE_SIZE, HEIGHT))
+    
+    
+if __name__ == "__main__":
     main()
