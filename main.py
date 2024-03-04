@@ -27,7 +27,7 @@ def main():
     update_freq = 120
     
     positions = set()
-    positions.add((10,10)) # will add tuple to positions set which we want, instead of two 10s individually
+    positions.add((10,10)) # will add tuple to positions set which we want, instead of two 10s individually if passed directly to positions
     while running:
         clock.tick(FPS)
         
