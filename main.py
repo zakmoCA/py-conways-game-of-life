@@ -13,5 +13,5 @@ GRID_WIDTH = WIDTH // TILE_SIZE
 GRID_HEIGHT = HEIGHT // TILE_SIZE
 FPS = 60
 
-# pygame methods: display, time, draw, event, QUIT, MOUSEBUTTONDOWN, mouse
+# pygame methods: display, time, draw, event, quit, QUIT, MOUSEBUTTONDOWN, mouse
 # KEYDOWN, K_SPACE, K_c, K_g
