@@ -1,6 +1,8 @@
 import pygame
 import random
 
+# verbose commenting: for quick reference/reminder for pygame specifics, should i want to build more games with it
+
 pygame.init()
 
 BLACK = (0, 0, 0)
@@ -23,6 +25,7 @@ clock = pygame.time.Clock()
 # event loop to init/run game logic
 def main():
     running = True
+    playing = False
     
     positions = set()
     positions.add((10,10)) # will add tuple to positions set which we want, instead of two 10s individually
@@ -33,11 +36,44 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
                 
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                x, y = pygame.mouse.get_pos()
+                # translate pixel position back to row x col position
+                col = x // TILE_SIZE
+                row = y // TILE_SIZE
+                pos = (col, row)
+                
+                if pos in positions:
+                    positions.remove(pos)
+                else:
+                    positions.add(pos)
+                    
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                      playing = not playing
+                      
+                if event.key == pygame.K_c:
+                    positions = set()
+                    playing = False
+                    
+                if event.key == pygame.K_r:
+                    positions = gen(random.randrange(2, 5) * GRID_WIDTH)
+                
         screen.fill(GREY)            
         draw_grid(positions)
         pygame.display.update() # run this whenever i want to reflect logic that changes state to the GUI
                 
+def gen(num):
+    return set([(random.randrange(0, GRID_HEIGHT), random.randrange(0, GRID_WIDTH)) for _ in range(num)])
+     # when generating random n based on grid/board dimensions in future use sets as above to -->
+     # avoid generating duplicate positions
     
+def adjust_grid(positions):
+    pass
+  
+def get_neighbours(pos):
+    pass
+
 def draw_grid(positions):
     # won't tell me pixel position but col x row position in the grid
     # translate the col x row position to the pixel position then draw it
