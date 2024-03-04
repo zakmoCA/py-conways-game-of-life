@@ -15,3 +15,22 @@ FPS = 60
 
 # pygame methods: display, time, draw, event, quit, QUIT, MOUSEBUTTONDOWN, mouse
 # KEYDOWN, K_SPACE, K_c, K_g
+
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+
+clock = pygame.time.Clock()
+
+# pygame requires event loop for calling core logic
+def main():
+    running = True
+    
+    while running:
+        clock.tick(FPS)
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+    pygame.quit()
+    
+if __name__ = "__main__":
+    main()
