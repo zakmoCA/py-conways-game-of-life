@@ -77,8 +77,8 @@ def gen(num):
     
 def adjust_grid(positions):
     # all_neighbours of all live cells from the current set of positions
-    all_neighbours = set() # checking neighbours of live cells more efficient than checking entire grid
-    new_positions = set() # next frame, new set necessary so as to not mutate determinism of current states cells
+    all_neighbours = set()
+    new_positions = set() # next frame - new set necessary so as to not mutate determinism of current states cells
     
     for position in positions:
         neighbours = get_neighbours(position)
@@ -102,11 +102,11 @@ def adjust_grid(positions):
 def get_neighbours(pos):
     x, y = pos
     neighbours = []
-    for dx in [-1, 0, 1]: # 9 iterations, 8 useful-->gives me every combination of neighbours, one is centre position which won't count
-        if x + dx < 0 or x + dx > GRID_WIDTH:
-            continue # above line means no displacement meaning we're at current position
+    for dx in [-1, 0, 1]: 
+        if x + dx < 0 or x + dx > GRID_WIDTH: # true means no displacement
+            continue # can continue as this means we are at current position
         for dy in [-1, 0, 1]:
-            if y + dy < 0 or y + dy > GRID_HEIGHT: # grid height/width as upper-bound so as to not go off the screen --> maybe implement expansion functionality for grid (upper bound still necessary, but can be higher)
+            if y + dy < 0 or y + dy > GRID_HEIGHT: # grid height/width as upper-bound so as to not go off the screen --> maybe implement expansion ability for grid (upper bound still necessary, but can be higher)
                 continue
             if dx == 0 and dy == 0:
                 continue
@@ -120,7 +120,7 @@ def draw_grid(positions):
         col, row = position
         top_left = (col * TILE_SIZE, row * TILE_SIZE)
         pygame.draw.rect(screen, YELLOW, (*top_left, TILE_SIZE, TILE_SIZE)) 
-        # *top_left: the prefixed * unpacks its tuple so tat they're passed as individual args
+        # *top_left: the prefixed * unpacks the tuple so that they're passed as individual args
   
     for row in range(GRID_HEIGHT):
           pygame.draw.line(screen, BLACK, (0, row * TILE_SIZE), (WIDTH, row * TILE_SIZE))
