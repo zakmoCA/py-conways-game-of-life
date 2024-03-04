@@ -1,8 +1,6 @@
 import pygame
 import random
 
-# verbose commenting: for quick reference/reminder for pygame specifics, should i want to build more games with it
-
 pygame.init()
 
 BLACK = (0, 0, 0)
@@ -15,22 +13,32 @@ GRID_WIDTH = WIDTH // TILE_SIZE
 GRID_HEIGHT = HEIGHT // TILE_SIZE
 FPS = 60
 
-# pygame methods: display, time, draw, event, quit, QUIT, MOUSEBUTTONDOWN, mouse
-# KEYDOWN, K_SPACE, K_c, K_g
+
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
 clock = pygame.time.Clock()
 
-# event loop to init/run game logic
+
 def main():
     running = True
     playing = False
+    count = 0
+    update_freq = 120
     
     positions = set()
     positions.add((10,10)) # will add tuple to positions set which we want, instead of two 10s individually
     while running:
         clock.tick(FPS)
+        
+        if playing:
+            count += 1
+        
+        if count >= update_freq:
+            count = 0
+            positions = adjust_grid(positions)
+            
+        pygame.display.set_caption("Playing" if playing else "Paused")
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -61,25 +69,55 @@ def main():
                 
         screen.fill(GREY)            
         draw_grid(positions)
-        pygame.display.update() # run this whenever i want to reflect logic that changes state to the GUI
+        pygame.display.update() 
                 
 def gen(num):
     return set([(random.randrange(0, GRID_HEIGHT), random.randrange(0, GRID_WIDTH)) for _ in range(num)])
-     # when generating random n based on grid/board dimensions in future use sets as above to -->
-     # avoid generating duplicate positions
+     
     
 def adjust_grid(positions):
-    pass
+    # all_neighbours of all live cells from the current set of positions
+    all_neighbours = set() # checking neighbours of live cells more efficient than checking entire grid
+    new_positions = set() # next frame, new set necessary so as to not mutate determinism of current states cells
+    
+    for position in positions:
+        neighbours = get_neighbours(position)
+        all_neighbours.update(neighbours)
+        
+        neighbours = list(filter(lambda x: x in positions, neighbours))
+        
+        if len(neighbours) in [2, 3]:
+            new_positions.add(position) # cell is safe!
+            
+    for position in all_neighbours: 
+        neighbours = get_neighbours(position)
+        neighbours = list(filter(lambda x: x in positions, neighbours))
+        
+        if len(neighbours) == 3:
+            new_positions.add(position) # cell has enough neighbours to come alive!
+    return new_positions
+        
+     
   
 def get_neighbours(pos):
-    pass
+    x, y = pos
+    neighbours = []
+    for dx in [-1, 0, 1]: # 9 iterations, 8 useful-->gives me every combination of neighbours, one is centre position which won't count
+        if x + dx < 0 or x + dx > GRID_WIDTH:
+            continue # above line means no displacement meaning we're at current position
+        for dy in [-1, 0, 1]:
+            if y + dy < 0 or y + dy > GRID_HEIGHT: # grid height/width as upper-bound so as to not go off the screen --> maybe implement expansion functionality for grid (upper bound still necessary, but can be higher)
+                continue
+            if dx == 0 and dy == 0:
+                continue
+
+            neighbours.append((x + dx, y + dy))
+    
+    return neighbours
 
 def draw_grid(positions):
-    # won't tell me pixel position but col x row position in the grid
-    # translate the col x row position to the pixel position then draw it
     for position in positions:
         col, row = position
-        # in pygame we always draw from top left corner
         top_left = (col * TILE_SIZE, row * TILE_SIZE)
         pygame.draw.rect(screen, YELLOW, (*top_left, TILE_SIZE, TILE_SIZE)) 
         # *top_left: the prefixed * unpacks its tuple so tat they're passed as individual args
