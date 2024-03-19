@@ -24,7 +24,7 @@ def main():
     running = True
     playing = False
     count = 0
-    update_freq = 120
+    update_freq = 10
     
     positions = set()
     positions.add((10,10)) 
